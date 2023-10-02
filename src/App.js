@@ -174,7 +174,7 @@ function ImageUpload() {
             )
         }
       </div >
-      <div style={{ width: '60%' }}>
+      <div style={{ width: '60%', background: '#EFF7F7' }}>
         {croppedArray.length > 0 ? (
           <>
             <div>
