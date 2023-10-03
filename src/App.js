@@ -15,6 +15,9 @@ import ListItemText from '@mui/material/ListItemText';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import TypeWriterEffectComponent from './TypeWriterEffectComponent';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function ImageUpload() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -25,6 +28,7 @@ function ImageUpload() {
   const [previewImage, setPreviewImage] = useState(null);
   const [up, setUp] = useState(false)
   const [selItem, setSelItem] = useState('/img/check.png')
+  const host = "192.168.43.224"
 
   const handleCheckboxChange = (url) => {
     if (selectedImages.includes(url)) {
@@ -63,7 +67,7 @@ function ImageUpload() {
     const formData = new FormData();
     formData.append('image', selectedImage);
 
-    axios.post('http://127.0.0.1:5000/upload', formData)
+    axios.post(`http://${host}:5000/upload`, formData)
       .then(response => {
         if (response.data.msg === 'uploaded') {
           setImgUrl(response.data.url);
@@ -72,41 +76,85 @@ function ImageUpload() {
         const formDataCrop = new FormData();
         formDataCrop.append('name', filename);
 
-        axios.post('http://127.0.0.1:5000/crop', formDataCrop)
+        axios.post(`http://${host}:5000/crop`, formDataCrop)
           .then(response => {
             setCroppedArray(response.data.urls)
           })
           .catch(error => {
-          });
+            toast.error("An error occured", {
+              position: toast.POSITION.TOP_RIGHT
+            });
+            setSelectedImage(null);
+            setImgUrl(null);
+            setFilename('');
+            setCroppedArray([]);
+            setSelectedImages([]);
+            setPreviewImage(null);
+            setUp(false);
+            setSelItem('/img/check.png')
+          }
+          );
       })
       .catch(error => {
+        toast.error("An error occured", {
+          position: toast.POSITION.TOP_RIGHT
+        });
+        setSelectedImage(null);
+        setImgUrl(null);
+        setFilename('');
+        setCroppedArray([]);
+        setSelectedImages([]);
+        setPreviewImage(null);
+        setUp(false);
+        setSelItem('/img/check.png')
       });
   };
 
   const getSelURL = () => {
-    let items = selectedImages.map(url => url.replace('http://127.0.0.1:5000/', ''));
+    let items = selectedImages.map(url => url.replace(`http://${host}:5000/`, ''));
 
-    axios.post('http://127.0.0.1:5000/process_items', {
+    axios.post(`http://${host}:5000/process_items`, {
       items: items
     })
       .then(response => {
         const archive_path = response.data.archive_path
         if (response.data.msg === 'archived') {
-          axios.get(`http://127.0.0.1:5000/get_archive/${archive_path}`)
+          axios.get(`http://${host}:5000/get_archive/${archive_path}`)
             .then(response => {
 
             })
             .catch(err => {
-
+              toast.error("An error occured", {
+                position: toast.POSITION.TOP_RIGHT
+              });
+              setSelectedImage(null);
+              setImgUrl(null);
+              setFilename('');
+              setCroppedArray([]);
+              setSelectedImages([]);
+              setPreviewImage(null);
+              setUp(false);
+              setSelItem('/img/check.png')
             })
         }
       })
       .catch(error => {
+        toast.error("An error occured", {
+          position: toast.POSITION.TOP_RIGHT
+        });
+        setSelectedImage(null);
+        setImgUrl(null);
+        setFilename('');
+        setCroppedArray([]);
+        setSelectedImages([]);
+        setPreviewImage(null);
+        setUp(false);
+        setSelItem('/img/check.png')
       });
   }
 
   const handleSelectAll = () => {
-    const allUrls = croppedArray.map(url => 'http://127.0.0.1:5000/' + url);
+    const allUrls = croppedArray.map(url => `http://${host}:5000/` + url);
     setSelectedImages(allUrls);
   };
 
@@ -150,7 +198,7 @@ function ImageUpload() {
                         <div>
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/*,.pdf"
                             onChange={handleFileChange}
                             style={{ display: 'none' }}
                             id="fileInput"
@@ -191,10 +239,10 @@ function ImageUpload() {
                           <label>
                             <input
                               type="checkbox"
-                              checked={selectedImages.includes('http://127.0.0.1:5000/' + url)}
-                              onChange={() => { handleCheckboxChange('http://127.0.0.1:5000/' + url); setSelItem('http://127.0.0.1:5000/' + url) }}
+                              checked={selectedImages.includes(`http://${host}:5000/` + url)}
+                              onChange={() => { handleCheckboxChange(`http://${host}:5000/` + url); setSelItem(`http://${host}:5000/` + url) }}
                             />
-                            <img src={'http://127.0.0.1:5000/' + url} width={150} height={180} alt={i} />
+                            <img src={`http://${host}:5000/` + url} width={150} height={180} alt={i} />
                             <p>{url.split('/')[3]}</p>
                           </label>
                         </div>
@@ -285,6 +333,7 @@ function ImageUpload() {
           </>
         )}
       </div>
+      <ToastContainer />
     </div >
   );
 }
