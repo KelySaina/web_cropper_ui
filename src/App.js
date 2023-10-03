@@ -28,7 +28,7 @@ function ImageUpload() {
   const [previewImage, setPreviewImage] = useState(null);
   const [up, setUp] = useState(false)
   const [selItem, setSelItem] = useState('/img/check.png')
-  const host = "192.168.43.224"
+  const host = "127.0.0.1"
 
   const handleCheckboxChange = (url) => {
     if (selectedImages.includes(url)) {
