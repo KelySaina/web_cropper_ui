@@ -42,14 +42,20 @@ function ImageUpload() {
     const file = e.target.files[0];
     setSelectedImage(file);
     setFilename(file.name);
+
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setPreviewImage(reader.result);
+        if (file.name.toLowerCase().endsWith(".pdf")) {
+          setPreviewImage('/img/pdf.png');
+        } else {
+          setPreviewImage(reader.result);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -121,12 +127,11 @@ function ImageUpload() {
         if (response.data.msg === 'archived') {
           axios.get(`http://${host}:5000/get_archive/${archive_path}`)
             .then(response => {
-
-            })
-            .catch(err => {
-              toast.error("An error occured", {
+              toast.success("Success", {
                 position: toast.POSITION.TOP_RIGHT
               });
+            })
+            .catch(err => {
               setSelectedImage(null);
               setImgUrl(null);
               setFilename('');
