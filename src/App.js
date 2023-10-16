@@ -127,9 +127,7 @@ function ImageUpload() {
         if (response.data.msg === 'archived') {
           axios.get(`http://${host}:5000/get_archive/${archive_path}`)
             .then(response => {
-              toast.success("Success", {
-                position: toast.POSITION.TOP_RIGHT
-              });
+
             })
             .catch(err => {
               setSelectedImage(null);
