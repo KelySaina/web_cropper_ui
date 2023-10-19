@@ -77,6 +77,7 @@ function ImageUpload() {
       .then(response => {
         if (response.data.msg === 'uploaded') {
           setImgUrl(response.data.url);
+          setSelItem(response.data.url);
           setUp(true)
         }
         const formDataCrop = new FormData();
@@ -124,22 +125,7 @@ function ImageUpload() {
     })
       .then(response => {
         const archive_path = response.data.archive_path
-        if (response.data.msg === 'archived') {
-          axios.get(`http://${host}:5000/get_archive/${archive_path}`)
-            .then(response => {
-
-            })
-            .catch(err => {
-              setSelectedImage(null);
-              setImgUrl(null);
-              setFilename('');
-              setCroppedArray([]);
-              setSelectedImages([]);
-              setPreviewImage(null);
-              setUp(false);
-              setSelItem('/img/check.png')
-            })
-        }
+        window.open(`http://${host}:5000/${archive_path}`, "_blank");
       })
       .catch(error => {
         toast.error("An error occured", {
@@ -245,7 +231,13 @@ function ImageUpload() {
                               checked={selectedImages.includes(`http://${host}:5000/` + url)}
                               onChange={() => { handleCheckboxChange(`http://${host}:5000/` + url); setSelItem(`http://${host}:5000/` + url) }}
                             />
-                            <img src={`http://${host}:5000/` + url} width={150} height={180} alt={i} />
+                            <img
+                              src={`http://${host}:5000/` + url}
+                              width={150}
+                              height={180}
+                              alt={i}
+                              style={{ border: selectedImages.includes(`http://${host}:5000/` + url) ? '3px solid darkblue' : 'none' }}
+                            />
                             <p>{url.split('/')[3]}</p>
                           </label>
                         </div>
